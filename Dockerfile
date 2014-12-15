@@ -19,8 +19,10 @@ VOLUME ["/etc/mysql", "/var/lib/mysql"]
 # Define working directory.
 WORKDIR /data
 
+ADD scripts/mysqld /mysqld
+
 # Define default command.
-CMD ["mysqld_safe"]
+CMD ["/mysqld"]
 
 # Expose ports.
 EXPOSE 3306
