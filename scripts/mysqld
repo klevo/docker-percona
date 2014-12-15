@@ -15,9 +15,9 @@ else
   mysql -e "UPDATE mysql.user SET Password = PASSWORD('$MYSQL_ROOT_PASSWORD') WHERE User = 'root';"
   echo "mysql root password set to ENV[MYSQL_ROOT_PASSWORD]"
   
-  # TODO: create /root/.my.cnf
-  mv /my.root.cnf /root/.my.cnf
-  sed ...
+  echo "TODO: create /root/.my.cnf"
+  # mv /my.root.cnf /root/.my.cnf
+  # sed ...
   
   # Shutdown the server so that we can start it again so that docker can monitor it
   mysqladmin shutdown
