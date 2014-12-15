@@ -1,0 +1,27 @@
+#!/bin/bash
+
+if [ -d /var/lib/mysql/mysql ]; then
+  echo "/var/lib/mysql/mysql exists - assuming mysql data dir is populated."
+else
+  # If the data folder was created beforehand on the host, it will have different owner. Correct this:
+  chown mysql:mysql /var/lib/mysql
+  
+  mysql_install_db
+  echo "mysql system tables installed"
+  
+  mysqld_safe &
+  mysqladmin --silent --wait=30 ping || exit 1
+  mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;"
+  mysql -e "UPDATE mysql.user SET Password = PASSWORD('$MYSQL_ROOT_PASSWORD') WHERE User = 'root';"
+  echo "mysql root password set to ENV[MYSQL_ROOT_PASSWORD]"
+  
+  # TODO: create /root/.my.cnf
+  mv /my.root.cnf /root/.my.cnf
+  sed ...
+  
+  # Shutdown the server so that we can start it again so that docker can monitor it
+  mysqladmin shutdown
+fi
+
+echo "Launching mysqld_safe..."
+exec mysqld_safe
