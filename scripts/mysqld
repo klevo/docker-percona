@@ -2,6 +2,10 @@
 
 if [ -d /var/lib/mysql/mysql ]; then
   echo "/var/lib/mysql/mysql exists - assuming mysql data dir is populated."
+  
+  if [ ! -f /root/.my.cnf ]; then
+    /create_my_root_cnf
+  fi
 else
   # If the data folder was created beforehand on the host, it will have different owner. Correct this:
   chown mysql:mysql /var/lib/mysql
@@ -23,10 +27,7 @@ else
   mysql -e "FLUSH PRIVILEGES;"
   echo "mysql root password set to ENV[MYSQL_ROOT_PASSWORD]"
   
-  sed -i "s/^\(password=\).*/\1$MYSQL_ROOT_PASSWORD/" /root/.my.cnf.template
-  mv /root/.my.cnf.template /root/.my.cnf
-  chmod 0600 /root/.my.cnf
-  echo "/root/.my.cnf set"
+  /create_my_root_cnf
   
   # Shutdown the server so that we can start it again so that docker can monitor it
   mysqladmin shutdown

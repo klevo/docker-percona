@@ -1,0 +1,6 @@
+#!/bin/bash
+
+sed -i "s/^\(password=\).*/\1$MYSQL_ROOT_PASSWORD/" /root/.my.cnf.template
+mv /root/.my.cnf.template /root/.my.cnf
+chmod 0600 /root/.my.cnf
+echo "/root/.my.cnf set"

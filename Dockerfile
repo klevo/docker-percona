@@ -16,6 +16,7 @@ ADD mysql/my.cnf /etc/mysql/my.cnf
 # Password-less logins for the root.
 ADD mysql/my.root.cnf /root/.my.cnf.template
 
+ADD scripts/create_my_root_cnf /create_my_root_cnf
 ADD scripts/mysqld /mysqld
 
 # Define default command.
