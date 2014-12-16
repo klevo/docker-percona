@@ -14,7 +14,7 @@ VOLUME ["/etc/mysql", "/var/lib/mysql"]
 ADD mysql/my.cnf /etc/mysql/my.cnf
 
 # Password-less logins for the root.
-ADD mysql/my.root.cnf /root/.my.cnf
+ADD mysql/my.root.cnf /root/.my.cnf.template
 
 ADD scripts/mysqld /mysqld
 
