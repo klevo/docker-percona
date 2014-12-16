@@ -8,7 +8,7 @@ RUN \
   apt-get install -y percona-server-server-5.6 percona-server-client-5.6 percona-toolkit percona-xtrabackup
 
 # Define mountable directories.
-VOLUME ["/etc/mysql", "/var/lib/mysql"]
+VOLUME ["/etc/mysql", "/var/lib/mysql", "/backups"]
 
 # Add a default, tweaked mysql config. In production should be replaced by a mounted volume, with your own config managed by your orchestration solution (Chef, etc.)
 ADD mysql/my.cnf /etc/mysql/my.cnf
