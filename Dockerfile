@@ -12,6 +12,10 @@ VOLUME ["/etc/mysql", "/var/lib/mysql"]
 
 # Add a default, tweaked mysql config. In production should be replaced by a mounted volume, with your own config managed by your orchestration solution (Chef, etc.)
 ADD mysql/my.cnf /etc/mysql/my.cnf
+
+# Password-less logins for the root.
+ADD mysql/my.root.cnf /root/.my.cnf
+
 ADD scripts/mysqld /mysqld
 
 # Define default command.

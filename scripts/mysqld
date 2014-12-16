@@ -20,11 +20,12 @@ else
   # Secure root account
   mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;"
   mysql -e "UPDATE mysql.user SET Password = PASSWORD('$MYSQL_ROOT_PASSWORD') WHERE User = 'root';"
+  mysql -e "FLUSH PRIVILEGES;"
   echo "mysql root password set to ENV[MYSQL_ROOT_PASSWORD]"
   
-  echo "TODO: create /root/.my.cnf"
-  # mv /my.root.cnf /root/.my.cnf
-  # sed ...
+  sed -i "s/^\(password=\).*/\1$MYSQL_ROOT_PASSWORD/" /root/.my.cnf
+  chmod 0600 /root/.my.cnf
+  echo "cat /root/.my.cnf"
   
   # Shutdown the server so that we can start it again so that docker can monitor it
   mysqladmin shutdown
