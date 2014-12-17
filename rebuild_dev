@@ -7,7 +7,7 @@ echo " -> Rebuilding the image from current directory"
 docker build -t klevo/percona .
 
 echo " -> Recreating data dir mount"
-# boot2docker ssh "sudo rm -rf /home/docker/percona-data; mkdir -p /home/docker/percona-data"
+boot2docker ssh "sudo rm -rf /home/docker/percona-data; mkdir -p /home/docker/percona-data"
 
 echo " -> Run the new container"
 docker run -d --name percona \
