@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo " -> Removing docker images"
-docker rm -f db1 db1_slave
+docker rm -f db1_slave
 
 echo " -> Rebuilding the image from current directory"
 docker build -t klevo/percona .
@@ -10,16 +10,12 @@ echo " -> Recreating data dir mount"
 boot2docker ssh "sudo rm -rf /home/docker/percona-data; mkdir -p /home/docker/percona-data"
 
 echo " -> Run the new master and slave containers"
-docker run -d --name db1 \
-  -v /home/docker/percona-data:/var/lib/mysql \
-  -e MYSQL_ROOT_PASSWORD=mypass \
-  --hostname db1 \
-  klevo/percona
 
 docker run -d --name db1_slave \
-  --link db1:db1 \
+  --link db1_master:db1_master \
+  -v /Users/klevo/containers/test_mysql_master/keys/id_rsa:/tunnels_id_rsa \
   -e MYSQL_ROOT_PASSWORD=mypass \
-  -e REPLICATION_SLAVE_MASTER_HOST=db1 \
+  -e REPLICATION_SLAVE_MASTER_HOST=db1_master \
   -e REPLICATION_SLAVE_REMOTE_PORT=3306 \
   -e REPLICATION_SLAVE_USER=db1_slave \
   -e REPLICATION_SLAVE_PASSWORD=slaveuserpass \
