@@ -60,3 +60,13 @@ STOP SLAVE;
 CHANGE MASTER TO MASTER_HOST='127.0.0.1', MASTER_USER='slave_db1', MASTER_PASSWORD='slaveuserpass', MASTER_PORT=3307, MASTER_LOG_FILE='mysql-bin.000001', MASTER_LOG_POS=107;
 START SLAVE;
 ```
+
+### Create a master db container for testing
+
+```
+docker run -d --name=db1_master --hostname=db1_master dockerfile/percona
+docker exec -i -t db1_master bash
+apt-get update && apt-get install -y openssh-server
+mkdir /home/tunnels
+useradd -d /home/tunnels -m tunnels
+```
