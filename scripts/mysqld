@@ -6,6 +6,12 @@ if [ -d /var/lib/mysql/mysql ]; then
   if [ ! -f /root/.my.cnf ]; then
     /create_my_root_cnf
   fi
+  
+  # Set up replication
+  if [ "$REPLICATION_SLAVE_MASTER_HOST" ]; then
+    autossh -M 0 -q -f -N -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" -L 3307:localhost:$REPLICATION_SLAVE_REMOTE_PORT tunnels@$REPLICATION_SLAVE_MASTER_HOST
+    echo "autossh tunnel to $REPLICATION_SLAVE_MASTER_HOST:$REPLICATION_SLAVE_REMOTE_PORT started."
+  fi
 else
   # If the data folder was created beforehand on the host, it will have different owner. Correct this:
   chown mysql:mysql /var/lib/mysql
@@ -28,9 +34,10 @@ else
   echo "mysql root password set to ENV[MYSQL_ROOT_PASSWORD]"
   
   # Set up replication
-  # if [ "$REPLICATION_SLAVE_MASTER_IP" ]; then
-  #
-  # fi
+  if [ "$REPLICATION_SLAVE_MASTER_HOST" ]; then
+    autossh -M 0 -q -f -N -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" -L 3307:localhost:$REPLICATION_SLAVE_REMOTE_PORT tunnels@$REPLICATION_SLAVE_MASTER_HOST
+    echo "autossh tunnel to $REPLICATION_SLAVE_MASTER_HOST:$REPLICATION_SLAVE_REMOTE_PORT started."
+  fi
   
   /create_my_root_cnf
   

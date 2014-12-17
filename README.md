@@ -27,7 +27,7 @@ Run a container with replication settings specified:
 docker run -d --name db1_slave \
   -v /home/docker/percona-data:/var/lib/mysql \
   -e MYSQL_ROOT_PASSWORD=mypass \
-  -e REPLICATION_SLAVE_MASTER_IP=someip \
+  -e REPLICATION_SLAVE_MASTER_HOST=someip \
   -e REPLICATION_SLAVE_REMOTE_PORT=3306 \
   -e REPLICATION_SLAVE_USER=slave_db1 \
   -e REPLICATION_SLAVE_PASSWORD=slaveuserpass \
