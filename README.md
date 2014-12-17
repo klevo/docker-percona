@@ -21,7 +21,7 @@ docker exec -i -t percona innobackupex --apply-log /backups/2014-12-16_14-44-35
 
 ## Replication Over SSH Tunnel
 
-Run a container with replication settings specified:
+This container includes `autossh` which creates a tunnel to the master server if the below env variables are specified. Run a container with replication enabled like this:
 
 ```
 docker run -d --name db1_slave \
@@ -63,10 +63,4 @@ START SLAVE;
 
 ### Create a master db container for testing
 
-```
-docker run -d --name=db1_master --hostname=db1_master dockerfile/percona
-docker exec -i -t db1_master bash
-apt-get update && apt-get install -y openssh-server
-mkdir /home/tunnels
-useradd -d /home/tunnels -m tunnels
-```
+If you want to test the replication over the ssh tunnel with two docker containers, use my testing image: `klevo/test_mysql_master` and check the README.
