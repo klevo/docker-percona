@@ -29,6 +29,7 @@ docker run -d --name db1_slave \
   -e MYSQL_ROOT_PASSWORD=mypass \
   -e REPLICATION_SLAVE_MASTER_IP=someip \
   -e REPLICATION_SLAVE_REMOTE_PORT=3306 \
+  -e REPLICATION_SLAVE_USER=slave_db1 \
   -e REPLICATION_SLAVE_PASSWORD=slaveuserpass \
   -p 3308:3306 \
   klevo/percona

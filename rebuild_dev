@@ -13,6 +13,8 @@ echo " -> Run the new container"
 docker run -d --name percona \
   -v /home/docker/percona-data:/var/lib/mysql \
   -e MYSQL_ROOT_PASSWORD=mypass \
+  -e REPLICATION_SLAVE_USER=slave_db1 \
+  -e REPLICATION_SLAVE_PASSWORD=slaveuserpass \
   -p 3308:3306 \
   klevo/percona
 

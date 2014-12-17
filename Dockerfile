@@ -14,6 +14,8 @@ VOLUME ["/etc/mysql", "/var/lib/mysql", "/backups"]
 ADD mysql/my.cnf /etc/mysql/my.cnf
 
 ADD scripts/create_my_root_cnf /create_my_root_cnf
+ADD scripts/replication_master_sql /usr/bin/replication_master_sql
+ADD scripts/replication_start /usr/bin/replication_start
 ADD scripts/mysqld /mysqld
 
 # Define default command.

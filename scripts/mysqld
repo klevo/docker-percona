@@ -27,6 +27,11 @@ else
   mysql -e "FLUSH PRIVILEGES;"
   echo "mysql root password set to ENV[MYSQL_ROOT_PASSWORD]"
   
+  # Set up replication
+  # if [ "$REPLICATION_SLAVE_MASTER_IP" ]; then
+  #
+  # fi
+  
   /create_my_root_cnf
   
   # Shutdown the server so that we can start it again so that docker can monitor it
