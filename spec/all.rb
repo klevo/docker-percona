@@ -16,14 +16,27 @@ describe "running container" do
     @container = Docker::Container.create(
       'Image' => image_tag, 
       'Detach' => true, 
-      'Env' => [ 'MYSQL_ROOT_PASSWORD=something' ]
+      'Env' => [ 'MYSQL_ROOT_PASSWORD=something' ],
+      # 'Volumes' => {
+      #   ''
+      # }
     )
     @container.start
   end
 
   it "has root .my.cnf file that contains the password specified on container create" do
-    root_my_cnf = @container.exec(['bash', '-c', 'cat /root/.my.cnf'])
-    expect(root_my_cnf.first.first).to match(/password=something/)
+    root_my_cnf = @container.exec(['bash', '-c', 'cat /root/.my.cnf']).first.first
+    expect(root_my_cnf).to match(/password=something/)
+  end
+  
+  it "can run mysql query through build in mysql client" do
+    # Wait for mysql to start
+    @container.exec(['bash', '-c', 'mysqladmin --silent --wait=30 ping'])
+    
+    # TODO: bug revealed - the apt-get install in this, when no volume is attached, already populated the system tables
+    
+    query_result = @container.exec(['bash', '-c', 'mysql -e "show databases;"'])
+    expect(query_result[1][0]).to_not match(/Access denied for user/)
   end
 
   after(:all) do
