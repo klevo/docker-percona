@@ -37,10 +37,12 @@ describe "running container" do
   end
   
   it "can run mysql query through build in mysql client" do
-    # TODO: bug revealed - the apt-get install in this, when no volume is attached, already populated the system tables
+    stdout, stderr = @container.exec(['bash', '-c', 'mysql -e "show databases;"'])
+    expect(stderr.first).to_not match(/Access denied for user/)
     
-    query_result = @container.exec(['bash', '-c', 'mysql -e "show databases;"'])
-    expect(query_result[1][0]).to_not match(/Access denied for user/)
+    expect(stdout.first).to match(/mysql/)
+    expect(stdout.first).to match(/information_schema/)
+    expect(stdout.first).to_not match(/test/)
   end
 
   after(:all) do
