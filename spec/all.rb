@@ -11,7 +11,7 @@ describe "image" do
   end
 end
 
-describe "running container" do
+describe "running a container without attached volumes" do
   before(:all) do
     @container = Docker::Container.create(
       'Image' => image_tag, 
