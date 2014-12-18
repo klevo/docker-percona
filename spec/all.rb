@@ -22,6 +22,8 @@ describe "running container" do
       # }
     )
     @container.start
+    # Wait for mysql to start
+    @container.exec(['bash', '-c', 'mysqladmin --silent --wait=30 ping'])
   end
 
   it "has root .my.cnf file that contains the password specified on container create" do
@@ -29,10 +31,12 @@ describe "running container" do
     expect(root_my_cnf).to match(/password=something/)
   end
   
+  it "runs mysql daemon" do
+    stdout, stderr = @container.exec(['bash', '-c', 'ps aux'])
+    expect(stdout.first).to match(/\/usr\/sbin\/mysqld/)
+  end
+  
   it "can run mysql query through build in mysql client" do
-    # Wait for mysql to start
-    @container.exec(['bash', '-c', 'mysqladmin --silent --wait=30 ping'])
-    
     # TODO: bug revealed - the apt-get install in this, when no volume is attached, already populated the system tables
     
     query_result = @container.exec(['bash', '-c', 'mysql -e "show databases;"'])
