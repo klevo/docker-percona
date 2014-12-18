@@ -10,6 +10,9 @@ RUN \
 # Install autossh for permanent tunnel creation.
 RUN apt-get install -y autossh
 
+# Empty mysql data dir, so that our init script can start from a clean slate
+RUN rm -rf /var/lib/mysql/*
+
 # Define mountable directories.
 VOLUME ["/etc/mysql", "/var/lib/mysql", "/backups"]
 
