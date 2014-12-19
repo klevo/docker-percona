@@ -1,0 +1,3 @@
+#!/bin/bash
+
+bin/rspec spec/all.rb --format documentation
