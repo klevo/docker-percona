@@ -12,7 +12,7 @@ describe "image" do
 end
 
 describe "running a container without attached volumes" do
-  before(:all) do
+  before :all do
     @container = Docker::Container.create(
       'Image' => image_tag, 
       'Detach' => true, 
@@ -45,13 +45,31 @@ describe "running a container without attached volumes" do
     expect(stdout.first).to_not match(/test/)
   end
 
-  after(:all) do
+  after :all do
     @container.delete(force: true)
   end
 end
 
 describe "running a container with empty attached volume" do
-  # TODO
+  before :all do
+    @container = Docker::Container.create(
+      'Image' => image_tag, 
+      'Detach' => true, 
+      'Env' => [ 'MYSQL_ROOT_PASSWORD=something' ]
+    )
+    @container.start('Binds' => '/Users/klevo/containers/percona/spec/fixtures/empty-data-dir:/var/lib/mysql')
+    # Wait for mysql to start
+    @container.exec(['bash', '-c', 'mysqladmin --silent --wait=30 ping'])
+  end
+  
+  it "mounts the volume correctly" do
+    binding.pry
+    @container.exec(['bash', '-c', 'ls -la /var/lib/mysql/'])
+  end
+  
+  after :all do
+    @container.delete(force: true)
+  end
 end
 
 describe "running a container with populated attached volume" do
