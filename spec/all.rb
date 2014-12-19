@@ -64,14 +64,13 @@ describe "running a container with empty attached volume" do
     @container.exec(['bash', '-c', 'mysqladmin --silent --wait=30 ping'])
   end
   
-  # it "mounts the volume correctly" do
-#     binding.pry
-#     @container.exec(['bash', '-c', 'ls -la /var/lib/mysql/'])
-#   end
-
-  it "runs mysql daemon" do
-    stdout, stderr = @container.exec(['bash', '-c', 'ps aux'])
-    expect(stdout.first).to match(/\/usr\/sbin\/mysqld/)
+  it "can run mysql query through build in mysql client" do
+    stdout, stderr = @container.exec(['bash', '-c', 'mysql -e "show databases;"'])
+    expect(stderr.first).to_not match(/Access denied for user/)
+    
+    expect(stdout.first).to match(/mysql/)
+    expect(stdout.first).to match(/information_schema/)
+    expect(stdout.first).to_not match(/test/)
   end
   
   after :all do
