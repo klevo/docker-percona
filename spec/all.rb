@@ -56,7 +56,6 @@ describe "running a container with mounted volume" do
     `boot2docker ssh "if [ -d /tmp/empty-data-dir ]; then sudo rm -rf /tmp/empty-data-dir; fi; mkdir /tmp/empty-data-dir"`
     
     @container = Docker::Container.create(
-      'Name' => 'test_db1_master', # used later for replication tests
       'Image' => image_tag, 
       'Detach' => true, 
       'Env' => [ 'MYSQL_ROOT_PASSWORD=foo' ]
@@ -93,9 +92,10 @@ describe "running a container with mounted volume" do
     @slave = Docker::Container.create(
       'Image' => image_tag, 
       'Detach' => true, 
+      'Links' => ["#{@container.id}:master"],
       'Env' => [ 
         'MYSQL_ROOT_PASSWORD=foo',
-        'REPLICATION_SLAVE_MASTER_HOST=test_db1_master',
+        'REPLICATION_SLAVE_MASTER_HOST=master',
         'REPLICATION_SLAVE_REMOTE_PORT=3306',
         'REPLICATION_SLAVE_USER=db1_slave',
         'REPLICATION_SLAVE_PASSWORD=slaveUserPass'
@@ -112,10 +112,16 @@ describe "running a container with mounted volume" do
     # puts "Executing on master: \"#{sql}\""
     @master.exec(['bash', '-c', %{mysql -e "#{sql}"}])
     
-    # 3. Do some changes on the master
+    # 3. Start the replication on the slave
+    @slave.exec(['bash', '-c', 'replication_start'])
     
+    # 4. Do some changes on the master
+    @master.exec(['bash', '-c', %{mysql -e "create database go_slave;"}])
     
-    # 3. Check whether the query has propagated to the slave
+    # 5. Check whether the query has propagated to the slave
+    sleep 3
+    stdout, stderr = @slave.exec(['bash', '-c', 'mysql -e "show databases;"'])
+    expect(stdout.first).to match(/go_slave/)
     
     # Cleanup
     @slave.delete(force: true)
