@@ -49,3 +49,11 @@ describe "running a container without attached volumes" do
     @container.delete(force: true)
   end
 end
+
+describe "running a container with empty attached volume" do
+  # TODO
+end
+
+describe "running a container with populated attached volume" do
+  # TODO
+end

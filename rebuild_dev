@@ -9,7 +9,7 @@ docker build -t klevo/percona .
 echo " -> Recreating data dir mount"
 boot2docker ssh "sudo rm -rf /home/docker/percona-data; mkdir -p /home/docker/percona-data"
 
-echo " -> Run the new master and slave containers"
+echo " -> Run the slave container"
 
 docker run -d --name db1_slave \
   --link db1_master:db1_master \
