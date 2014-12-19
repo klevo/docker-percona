@@ -53,9 +53,10 @@ end
 # Note: we're using a mounted volume located within the host vm, because if we would mount something from OS X, we would have write permission problems: https://github.com/boot2docker/boot2docker/issues/581
 describe "running a container with mounted volume" do
   before :all do
-    `boot2docker ssh "mkdir /tmp/empty-data-dir"`
+    `boot2docker ssh "if [ -d /tmp/empty-data-dir ]; then sudo rm -rf /tmp/empty-data-dir; fi; mkdir /tmp/empty-data-dir"`
     
     @container = Docker::Container.create(
+      'Name' => 'test_db1_master', # used later for replication tests
       'Image' => image_tag, 
       'Detach' => true, 
       'Env' => [ 'MYSQL_ROOT_PASSWORD=foo' ]
@@ -83,6 +84,41 @@ describe "running a container with mounted volume" do
     @container.exec(['bash', '-c', 'mysqladmin --silent --wait=30 ping'])
     stdout, stderr = @container.exec(['bash', '-c', 'mysql -e "show databases;"'])
     expect(stdout.first).to match(/survive/)
+  end
+  
+  it "can be run as replication slave" do
+    @master = @container # just for clarity and intent
+    
+    # 1. Spin up a new container, that is going to be our replication slave
+    @slave = Docker::Container.create(
+      'Image' => image_tag, 
+      'Detach' => true, 
+      'Env' => [ 
+        'MYSQL_ROOT_PASSWORD=foo',
+        'REPLICATION_SLAVE_MASTER_HOST=test_db1_master',
+        'REPLICATION_SLAVE_REMOTE_PORT=3306',
+        'REPLICATION_SLAVE_USER=db1_slave',
+        'REPLICATION_SLAVE_PASSWORD=slaveUserPass'
+      ]
+    )
+    @slave.start
+    # Wait for slave to start
+    @slave.exec(['bash', '-c', 'mysqladmin --silent --wait=30 ping'])
+    
+    # 2. Use the replication_master_sql script to prepare master for replication
+    stdout, stderr = @slave.exec(['bash', '-c', 'replication_master_sql'])
+    
+    sql = stdout.first.chomp.strip
+    # puts "Executing on master: \"#{sql}\""
+    @master.exec(['bash', '-c', %{mysql -e "#{sql}"}])
+    
+    # 3. Do some changes on the master
+    
+    
+    # 3. Check whether the query has propagated to the slave
+    
+    # Cleanup
+    @slave.delete(force: true)
   end
   
   after :all do
