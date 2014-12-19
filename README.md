@@ -1,6 +1,6 @@
 # Percona MySQL server with Percona Tools, Replication Support & Shared Volume Initialization
 
-This Dockerfile has full test coverage. You can run the tests through `bin/spec`.
+This Dockerfile has full test coverage. You can run the specs through `bin/spec`. A caveat is that some of these specs rely on `boot2docker`. This is due to this container being developed on OS X.
 
 To run a container, with the mysql data dir mounted for persistence:
 
