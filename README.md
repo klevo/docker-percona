@@ -1,6 +1,8 @@
 # Percona MySQL server with Percona Tools, Replication Support & Shared Volume Initialization
 
-Run a container:
+This Dockerfile has full test coverage. You can run the tests through `bin/spec`.
+
+To run a container, with the mysql data dir mounted for persistence:
 
 ```
 docker run -d --name percona \
