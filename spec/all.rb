@@ -14,8 +14,8 @@ end
 describe "running a container without attached volumes" do
   before :all do
     @container = Docker::Container.create(
-      'Image' => image_tag, 
-      'Detach' => true, 
+      'Image' => image_tag,
+      'Detach' => true,
       'Env' => [ 'MYSQL_ROOT_PASSWORD=something' ],
       # 'Volumes' => {
       #   ''
@@ -30,16 +30,16 @@ describe "running a container without attached volumes" do
     root_my_cnf = @container.exec(['bash', '-c', 'cat /root/.my.cnf']).first.first
     expect(root_my_cnf).to match(/password=something/)
   end
-  
+
   it "runs mysql daemon" do
     stdout, stderr = @container.exec(['bash', '-c', 'ps aux'])
     expect(stdout.first).to match(/\/usr\/sbin\/mysqld/)
   end
-  
+
   it "can run mysql query through build in mysql client" do
     stdout, stderr = @container.exec(['bash', '-c', 'mysql -e "show databases;"'])
     expect(stderr.first).to_not match(/Access denied for user/)
-    
+
     expect(stdout.first).to match(/mysql/)
     expect(stdout.first).to match(/information_schema/)
     expect(stdout.first).to_not match(/test/)
@@ -92,7 +92,6 @@ describe "running a container with mounted volume" do
     @slave = Docker::Container.create(
       'Image' => image_tag, 
       'Detach' => true, 
-      'Links' => ["#{@container.id}:master"],
       'Env' => [ 
         'MYSQL_ROOT_PASSWORD=foo',
         'REPLICATION_SLAVE_MASTER_HOST=master',
@@ -101,26 +100,40 @@ describe "running a container with mounted volume" do
         'REPLICATION_SLAVE_PASSWORD=slaveUserPass'
       ]
     )
-    @slave.start
+    master_container_name = @master.json['Name'].gsub(/^\//, '')
+    @slave.start('Links' => ["#{master_container_name}:master"])
     # Wait for slave to start
     @slave.exec(['bash', '-c', 'mysqladmin --silent --wait=30 ping'])
+    
+    # TODO: tunnels user needs to be created and keys added for the replication to be able to connect
     
     # 2. Use the replication_master_sql script to prepare master for replication
     stdout, stderr = @slave.exec(['bash', '-c', 'replication_master_sql'])
     
     sql = stdout.first.chomp.strip
     # puts "Executing on master: \"#{sql}\""
-    @master.exec(['bash', '-c', %{mysql -e "#{sql}"}])
+    stdout, stderr = @master.exec(['bash', '-c', %{mysql -e "#{sql}"}])
+    puts [stdout, stderr]
+    
+    # Get the binlog position for the slave
+    stdout, stderr = @master.exec(['bash', '-c', 'mysql -N -B -e "show master status;"'])
+    puts [stdout, stderr]
+    binlog, position = stdout.first.split("\t")
     
     # 3. Start the replication on the slave
-    @slave.exec(['bash', '-c', 'replication_start'])
+    stdout, stderr = @slave.exec(['bash', '-c', "replication_start #{binlog} #{position}"])
+    puts [stdout, stderr]
+    
+    # binding.pry
     
     # 4. Do some changes on the master
-    @master.exec(['bash', '-c', %{mysql -e "create database go_slave;"}])
+    stdout, stderr = @master.exec(['bash', '-c', %{mysql -e "create database go_slave;"}])
+    puts [stdout, stderr]
     
     # 5. Check whether the query has propagated to the slave
     sleep 3
     stdout, stderr = @slave.exec(['bash', '-c', 'mysql -e "show databases;"'])
+    puts [stdout, stderr]
     expect(stdout.first).to match(/go_slave/)
     
     # Cleanup
