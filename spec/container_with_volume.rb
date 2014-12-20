@@ -11,9 +11,10 @@ describe "running a container with mounted volume" do
       'Env' => [ 'MYSQL_ROOT_PASSWORD=foo' ]
     )
     @container.start('Binds' => '/tmp/empty-data-dir:/var/lib/mysql')
+    
+    sleep 5
     # Wait for mysql to start
     @container.exec(['bash', '-c', 'mysqladmin --silent --wait=30 ping'])
-    sleep 2
   end
   
   it "can run mysql query through build in mysql client" do
@@ -31,8 +32,8 @@ describe "running a container with mounted volume" do
     @container.exec(['bash', '-c', 'mysql -e "create database survive;"'])
     @container.restart
     # Wait for mysql to start
+    sleep 5
     @container.exec(['bash', '-c', 'mysqladmin --silent --wait=30 ping'])
-    sleep 2
     stdout, stderr = @container.exec(['bash', '-c', 'mysql -e "show databases;"'])
     expect(stdout.first).to match(/survive/)
   end
