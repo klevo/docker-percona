@@ -32,6 +32,6 @@ describe "running a container without attached volumes" do
   end
 
   after :all do
-    @container.delete(force: true)
+    @container.delete(force: true, v: true)
   end
 end
