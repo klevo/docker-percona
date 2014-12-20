@@ -53,7 +53,7 @@ describe "replication" do
     
     # 3. Start the replication on the slave
     stdout, stderr = @slave.exec(['bash', '-c', "replication_start #{binlog} #{position}"])
-    puts [stdout, stderr]
+    # puts [stdout, stderr]
     expect(stdout.first).to_not match(/ERROR/)
     expect(stderr.first).to_not match(/ERROR/)
     
