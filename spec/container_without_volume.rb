@@ -10,6 +10,7 @@ describe "running a container without attached volumes" do
     @container.start
     # Wait for mysql to start
     @container.exec(['bash', '-c', 'mysqladmin --silent --wait=30 ping'])
+    sleep 2
   end
 
   it "has root .my.cnf file that contains the password specified on container create" do

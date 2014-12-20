@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo " -> Removing docker images"
-docker rm -f db1_slave
+docker rm -vf db1_slave
 
 echo " -> Rebuilding the image from current directory"
 docker build -t klevo/percona .

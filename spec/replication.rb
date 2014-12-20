@@ -26,6 +26,7 @@ describe "running a container with mounted volume" do
     # Wait for both containers to fully start
     @master.exec(['bash', '-c', 'mysqladmin --silent --wait=30 ping'])
     @slave.exec(['bash', '-c', 'mysqladmin --silent --wait=30 ping'])
+    sleep 2
   end
 
   it "can be run as replication slave" do
@@ -60,7 +61,7 @@ describe "running a container with mounted volume" do
   end
   
   after :all do
-    @master.delete(force: true)
-    @slave.delete(force: true)
+    @master.delete(force: true, v: true)
+    @slave.delete(force: true, v: true)
   end
 end
