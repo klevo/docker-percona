@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 # Note: we're using a mounted volume located within the host vm, because if we would mount something from OS X, we would have write permission problems: https://github.com/boot2docker/boot2docker/issues/581
-describe "running a container with mounted volume" do
+describe "replication" do
   before :all do
     @master = Docker::Container.create(
       'Image' => 'klevo/test_mysql_master',
