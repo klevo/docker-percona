@@ -30,7 +30,6 @@ describe "replication" do
     # Wait for both containers to fully start
     @master.exec(['bash', '-c', 'mysqladmin --silent --wait=30 ping'])
     @slave.exec(['bash', '-c', 'mysqladmin --silent --wait=30 ping'])
-    sleep 2
   end
 
   it "can be run as replication slave" do
