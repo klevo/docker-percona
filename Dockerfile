@@ -1,4 +1,6 @@
-FROM dockerfile/ubuntu
+FROM ubuntu:14.04
+
+ENV LAST_UPDATED 20150504
 
 # Install Percona Server, client, toolkit and xtrabackup.
 RUN \
