@@ -11,18 +11,12 @@ boot2docker ssh "sudo rm -rf /home/docker/percona-data; mkdir -p /home/docker/pe
 
 echo " -> Run the slave container"
 
-docker run -d --name db1_slave \
-  --link db1_master:db1_master \
-  -v /Users/klevo/containers/test_mysql_master/keys/id_rsa:/tunnels_id_rsa \
+docker run -d --name db1 \
   -e MYSQL_ROOT_PASSWORD=mypass \
-  -e REPLICATION_SLAVE_MASTER_HOST=db1_master \
-  -e REPLICATION_SLAVE_REMOTE_PORT=3306 \
-  -e REPLICATION_SLAVE_USER=db1_slave \
-  -e REPLICATION_SLAVE_PASSWORD=slaveuserpass \
-  --hostname db1_slave \
+  --hostname db1 \
   klevo/percona
 
 echo " -> Done."
 docker ps
 
-docker exec -i -t db1_slave bash
+docker exec -i -t db1 bash
