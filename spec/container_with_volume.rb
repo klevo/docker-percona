@@ -12,7 +12,6 @@ describe "running a container with mounted volume" do
     )
     @container.start('Binds' => '/tmp/empty-data-dir:/var/lib/mysql')
     
-    sleep 5
     # Wait for mysql to start
     @container.exec(['bash', '-c', 'mysqladmin --silent --wait=30 ping'])
   end
@@ -31,8 +30,6 @@ describe "running a container with mounted volume" do
   it "can be stopped, started again and data survives" do
     @container.exec(['bash', '-c', 'mysql -e "create database survive;"'])
     @container.restart
-    # Wait for mysql to start
-    sleep 5
     @container.exec(['bash', '-c', 'mysqladmin --silent --wait=30 ping'])
     stdout, stderr = @container.exec(['bash', '-c', 'mysql -e "show databases;"'])
     expect(stdout.first).to match(/survive/)
