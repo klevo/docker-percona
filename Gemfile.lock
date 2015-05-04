@@ -1,6 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    awesome_print (1.6.1)
     coderay (1.1.0)
     diff-lcs (1.2.5)
     docker-api (1.21.4)
@@ -32,6 +33,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  awesome_print
   docker-api
   pry
   rspec
