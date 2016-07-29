@@ -1,6 +1,6 @@
 FROM ubuntu:14.04
 
-ENV LAST_UPDATED 20150504
+ENV LAST_UPDATED 20160729
 
 # Install Percona Server, client, toolkit and xtrabackup.
 RUN \

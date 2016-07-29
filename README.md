@@ -6,7 +6,7 @@ To run a container with a mysql data dir mounted for persistence:
 
 ```
 docker run -d --name percona \
-  -v /home/docker/percona-data:/var/lib/mysql \
+  -v ~/containers/percona-data:/var/lib/mysql \
   -e MYSQL_ROOT_PASSWORD=mypass \
   -p 3308:3306 \
   klevo/percona
