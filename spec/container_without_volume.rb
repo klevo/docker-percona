@@ -8,7 +8,7 @@ describe "running a container without attached volumes" do
       'Env' => [ 'MYSQL_ROOT_PASSWORD=something' ]
     )
     @container.start
-    # ap @container.json
+    sleep 3 # wait a bit for the container to start
     @container.exec(['bash', '-c', 'mysqladmin --silent --wait=30 ping'])
   end
 

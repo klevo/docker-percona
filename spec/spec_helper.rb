@@ -1,6 +1,7 @@
 require 'docker'
 require 'pry'
 require 'awesome_print'
+require 'byebug'
 
 Excon.defaults[:ssl_verify_peer] = false
 
